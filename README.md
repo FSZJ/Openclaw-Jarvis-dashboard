@@ -81,6 +81,4 @@ python server.py
 
 如果这个项目对你有帮助，欢迎请我喝杯咖啡。
 
-> 你可以把下面图片替换成自己的微信收款码：`assets/social/wechat-donate-placeholder.png`
-
-![微信赞赏码](assets/social/wechat-donate-placeholder.png)
+![微信赞赏码](assets/social/wechat-donate.png)
