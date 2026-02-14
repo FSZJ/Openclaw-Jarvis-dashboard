@@ -1,6 +1,10 @@
-# OpenClaw Dashboard
+# Openclaw 贾维斯看板
 
 OpenClaw 多 Agent 实时监控面板（FastAPI + Vue）。
+
+## 预览
+
+![Dashboard Preview](assets/social/dashboard-screenshot-1920x1080.png)
 
 ## 功能
 - 系统状态：Gateway、CPU、Memory、通道状态
@@ -72,3 +76,11 @@ cd /Users/macmini/openclaw/openclaw-dashboard
 source .venv/bin/activate
 python server.py
 ```
+
+## 支持项目
+
+如果这个项目对你有帮助，欢迎请我喝杯咖啡。
+
+> 你可以把下面图片替换成自己的微信收款码：`assets/social/wechat-donate-placeholder.png`
+
+![微信赞赏码](assets/social/wechat-donate-placeholder.png)
