@@ -15,9 +15,10 @@
   --color-warning: #f4c95d;
   --color-error: #ff6b6b;
   --color-accent: #38bdf8;
-  --hero-panel-height: 300px;
-  --bottom-card-min-height: 320px;
-  --task-card-min-height: 620px;
+  --hero-panel-height: clamp(250px, 31vh, 360px);
+  --bottom-card-min-height: clamp(260px, 32vh, 420px);
+  --task-card-min-height: clamp(420px, 52vh, 760px);
+  --modal-max-height: min(85dvh, 900px);
   --dashboard-gap: 12px;
   --panel-padding: 14px;
   --card-title-size: 18px;
@@ -35,7 +36,7 @@ body {
   color: var(--color-text);
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  min-height: 100dvh;
   font-size: 14px;
   line-height: 1.4;
 }
@@ -313,6 +314,7 @@ small {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  min-height: 0;
 }
 
 .link-pill {
@@ -374,15 +376,58 @@ small {
   animation: scan 5s ease-in-out infinite;
 }
 
+.dashboard-page {
+  min-height: 100dvh;
+  overflow-x: clip;
+}
+
+.dashboard-main {
+  min-height: calc(100dvh - 4rem);
+  display: flex;
+  flex-direction: column;
+  overflow-x: clip;
+  overflow-y: auto;
+}
+
 .dashboard-shell {
   display: flex;
   flex-direction: column;
   gap: var(--dashboard-gap);
   min-height: 0;
+  flex: 1;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--dashboard-gap);
+  align-items: stretch;
+  min-height: 0;
+}
+
+.dashboard-primary {
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--dashboard-gap);
+}
+
+.dashboard-bottom-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--dashboard-gap);
+  min-height: 0;
+  align-items: stretch;
+}
+
+.dashboard-grid > *,
+.dashboard-bottom-grid > * {
+  min-width: 0;
 }
 
 .hero-panel {
-  height: var(--hero-panel-height);
+  min-height: var(--hero-panel-height);
+  height: auto;
 }
 
 .adaptive-bottom-card {
@@ -508,12 +553,13 @@ small {
 
 .hero-control-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   gap: 10px;
 }
 
 .hero-action {
-  height: 92px;
+  min-height: 86px;
+  height: auto;
 }
 
 .action-tile-content {
@@ -677,63 +723,51 @@ small {
 
 @media (max-width: 1536px) {
   :root {
-    --hero-panel-height: 290px;
-    --bottom-card-min-height: 300px;
-    --task-card-min-height: 580px;
+    --hero-panel-height: clamp(240px, 30vh, 320px);
+    --bottom-card-min-height: clamp(240px, 30vh, 340px);
+    --task-card-min-height: clamp(380px, 48vh, 620px);
     --dashboard-gap: 12px;
   }
 
   .hero-status-grid {
     grid-template-columns: 1fr;
   }
+}
 
-  .hero-control-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+@media (max-width: 1400px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
   }
 
-  .panel-scroll {
-    max-height: 220px;
-  }
-
-  .panel-scroll-conditional {
-    max-height: 200px;
+  .dashboard-bottom-grid {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 1279px) {
   :root {
-    --hero-panel-height: auto;
-    --bottom-card-min-height: 260px;
-    --task-card-min-height: 420px;
+    --hero-panel-height: clamp(230px, 34vh, 300px);
+    --bottom-card-min-height: clamp(240px, 34vh, 320px);
+    --task-card-min-height: clamp(360px, 50vh, 540px);
     --dashboard-gap: 10px;
     --panel-padding: 12px;
+    --card-title-size: 17px;
   }
 
   .agent-mini-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .hero-action {
-    height: 84px;
+  .hero-control-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .hero-panel {
-    height: auto;
-    min-height: 240px;
+  .hero-status-items.no-wrap {
+    flex-wrap: wrap;
+    overflow-x: visible;
   }
 
-  .adaptive-bottom-card {
-    min-height: 260px;
-  }
-
-  .task-main-card {
-    min-height: 420px;
-  }
-
-  .panel-scroll {
-    max-height: none;
-  }
-
+  .panel-scroll,
   .panel-scroll-conditional {
     max-height: none;
   }
@@ -743,73 +777,65 @@ small {
   :root {
     --dashboard-gap: 10px;
     --panel-padding: 12px;
-    --card-title-size: 17px;
-    --bottom-card-min-height: 280px;
-    --task-card-min-height: 500px;
+    --card-title-size: 16px;
+    --hero-panel-height: auto;
+    --bottom-card-min-height: 0px;
+    --task-card-min-height: 0px;
   }
 
-  .hero-control-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12px;
-  }
-
-  .hero-action {
-    min-height: 92px;
-    height: auto;
+  .dashboard-main {
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   .action-tile-content {
-    padding: 14px;
+    padding: 12px;
   }
 
   .model-usage-body {
     padding: 12px;
   }
 
-  .hero-panel {
-    min-height: 260px;
-  }
-
-  .adaptive-bottom-card {
-    min-height: 280px;
-  }
-
-  .task-main-card {
-    min-height: 500px;
+  .task-item {
+    gap: 10px;
   }
 }
 
-/* 1K / 1366x768 class displays */
-@media (max-width: 1400px) and (max-height: 900px) {
+@media (max-width: 480px) {
+  .agent-mini-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-control-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .neon-pill {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+
+  .chip {
+    padding: 4px 8px;
+    gap: 6px;
+  }
+}
+
+@media (max-height: 820px) and (min-width: 1280px) {
   :root {
-    --hero-panel-height: 260px;
-    --bottom-card-min-height: 250px;
-    --task-card-min-height: 440px;
+    --hero-panel-height: clamp(220px, 28vh, 280px);
+    --bottom-card-min-height: clamp(220px, 30vh, 280px);
+    --task-card-min-height: clamp(320px, 42vh, 480px);
     --dashboard-gap: 10px;
     --panel-padding: 12px;
-    --card-title-size: 17px;
-  }
-
-  .hero-action {
-    height: 86px;
   }
 }
 
-/* MacBook Air common (13-inch logical ~1440x900 / 1280x832) */
-@media (min-width: 1280px) and (max-width: 1680px) and (max-height: 980px) {
-  :root {
-    --hero-panel-height: 275px;
-    --bottom-card-min-height: 280px;
-    --task-card-min-height: 520px;
-  }
-}
-
-/* 2K / QHD */
 @media (min-width: 2000px) and (max-width: 3000px) {
   :root {
-    --hero-panel-height: 340px;
-    --bottom-card-min-height: 360px;
-    --task-card-min-height: 760px;
+    --hero-panel-height: clamp(320px, 34vh, 420px);
+    --bottom-card-min-height: clamp(340px, 35vh, 460px);
+    --task-card-min-height: clamp(620px, 56vh, 900px);
     --dashboard-gap: 14px;
     --panel-padding: 16px;
     --card-title-size: 20px;
@@ -820,12 +846,11 @@ small {
   }
 }
 
-/* 4K / UHD */
 @media (min-width: 3001px) {
   :root {
-    --hero-panel-height: 420px;
-    --bottom-card-min-height: 430px;
-    --task-card-min-height: 980px;
+    --hero-panel-height: clamp(360px, 36vh, 520px);
+    --bottom-card-min-height: clamp(400px, 38vh, 560px);
+    --task-card-min-height: clamp(760px, 60vh, 1100px);
     --dashboard-gap: 16px;
     --panel-padding: 18px;
     --card-title-size: 22px;

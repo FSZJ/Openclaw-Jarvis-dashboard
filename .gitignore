@@ -8,3 +8,5 @@ __pycache__/
 *.err
 frontend/node_modules/
 frontend/dist/
+
+frontend/artifacts/

@@ -6,19 +6,22 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:responsive": "npm run build && node ./scripts/responsive-check.mjs",
+    "test:responsive:headed": "npm run build && HEADLESS=0 node ./scripts/responsive-check.mjs"
   },
   "dependencies": {
-    "vue": "^3.4.0",
-    "vue-router": "^4.2.0",
+    "axios": "^1.6.0",
     "pinia": "^2.1.0",
-    "axios": "^1.6.0"
+    "vue": "^3.4.0",
+    "vue-router": "^4.2.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.0",
-    "vite": "^5.0.0",
     "autoprefixer": "^10.4.0",
+    "playwright": "^1.58.2",
     "postcss": "^8.4.0",
-    "tailwindcss": "^3.4.0"
+    "tailwindcss": "^3.4.0",
+    "vite": "^5.0.0"
   }
 }

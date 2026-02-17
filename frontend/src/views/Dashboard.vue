@@ -1,6 +1,6 @@
 <template>
-  <div class="min-h-screen md:h-screen overflow-x-hidden">
-    <header class="h-16 bg-gray-900/80 backdrop-blur border-b border-gray-800">
+  <div class="dashboard-page min-h-[100dvh] overflow-x-hidden">
+    <header class="relative z-40 h-16 bg-gray-900/80 backdrop-blur border-b border-gray-800">
       <div class="max-w-full mx-auto px-4 h-full flex items-center justify-between">
         <div class="flex items-center gap-3">
           <h1 class="text-lg font-bold text-openclaw-300">OpenClaw Jarvis</h1>
@@ -12,11 +12,12 @@
             <span>{{ jarvisFace }}</span>
             <span>{{ jarvisMoodLabel }}</span>
           </div>
-          <div class="relative">
+          <div ref="alertsWrap" class="relative">
             <button
-              @click="showAlerts = !showAlerts"
+              @click.stop="toggleAlerts"
               class="p-2 text-gray-300 hover:text-white transition-colors rounded-lg hover:bg-gray-800"
               aria-label="alerts"
+              :aria-expanded="showAlerts ? 'true' : 'false'"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -30,9 +31,10 @@
                 {{ alertCount }}
               </span>
             </button>
-            <div v-if="showAlerts" class="absolute right-0 mt-2 w-80 card glass z-20">
+            <div v-if="showAlerts" class="absolute right-0 mt-2 w-[min(22rem,92vw)] card glass z-[90]" @click.stop>
               <div class="card-header">
                 <h3 class="card-title">异常提醒</h3>
+                <button class="text-gray-300 hover:text-white text-xs" @click="closeAlerts">关闭</button>
               </div>
               <div class="space-y-2 max-h-56 overflow-y-auto">
                 <div v-if="alertItems.length === 0" class="text-gray-500 text-center py-3">
@@ -58,18 +60,18 @@
       </div>
     </header>
 
-    <main class="min-h-[calc(100vh-4rem)] md:h-[calc(100vh-4rem)] max-w-full mx-auto px-4 py-3 overflow-y-auto md:overflow-hidden">
+    <main class="dashboard-main max-w-full mx-auto px-4 py-3">
       <div v-if="dashboardStore.error" class="mb-2 p-3 bg-red-900/50 border border-red-700 rounded-lg">
         <p class="text-red-300">{{ dashboardStore.error }}</p>
       </div>
 
-      <div v-if="!dashboardStore.status && dashboardStore.loading" class="h-full flex justify-center items-center">
+      <div v-if="!dashboardStore.status && dashboardStore.loading" class="min-h-[40vh] flex justify-center items-center">
         <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-openclaw-500"></div>
       </div>
 
-      <div v-else-if="dashboardStore.status" class="dashboard-shell h-full">
-        <section class="grid grid-cols-1 2xl:grid-cols-3 gap-4 flex-1 min-h-0">
-          <div class="2xl:col-span-2 h-full flex flex-col gap-4 min-h-0">
+      <div v-else-if="dashboardStore.status" class="dashboard-shell">
+        <section class="dashboard-grid">
+          <div class="dashboard-primary">
             <div class="card glass jarvis hero-panel relative overflow-hidden p-4 xl:p-5 shrink-0">
               <div class="scan-line"></div>
               <div class="flex items-center gap-4 xl:gap-5 h-full">
@@ -152,7 +154,7 @@
               </div>
             </div>
 
-            <div class="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch 2xl:flex-1 2xl:min-h-0">
+            <div class="dashboard-bottom-grid">
               <div class="card glass compact-panel adaptive-bottom-card flex flex-col overflow-hidden">
                 <div class="card-header">
                   <h3 class="card-title flex items-center gap-2">
@@ -296,7 +298,7 @@
             </div>
           </div>
 
-          <div class="card glass task-main-card h-full min-h-0 flex flex-col">
+          <div class="card glass task-main-card flex flex-col">
             <div class="card-header items-center">
               <div class="flex items-center gap-2">
                 <span>📋</span>
@@ -342,8 +344,8 @@
     </main>
   </div>
 
-  <div v-if="openHistory" class="fixed inset-0 bg-black/60 z-30 flex items-center justify-center" @click.self="openHistory = false">
-    <div class="card glass w-full max-w-2xl p-4">
+  <div v-if="openHistory" class="fixed inset-0 bg-black/60 z-30 flex items-center justify-center p-3" @click.self="openHistory = false">
+    <div class="card glass w-full max-w-2xl p-4 max-h-[min(85dvh,900px)] overflow-y-auto">
       <div class="card-header">
         <h3 class="card-title">历史任务</h3>
         <button class="text-gray-300 hover:text-white" @click="openHistory = false">关闭</button>
@@ -365,8 +367,8 @@
     </div>
   </div>
 
-  <div v-if="openCreateTodo" class="fixed inset-0 bg-black/60 z-30 flex items-center justify-center" @click.self="closeCreateModal">
-    <div class="card glass w-full max-w-lg p-4">
+  <div v-if="openCreateTodo" class="fixed inset-0 bg-black/60 z-30 flex items-center justify-center p-3" @click.self="closeCreateModal">
+    <div class="card glass w-full max-w-lg p-4 max-h-[min(85dvh,900px)] overflow-y-auto">
       <div class="card-header">
         <h3 class="card-title">新建任务</h3>
         <button class="text-gray-300 hover:text-white" @click="closeCreateModal">关闭</button>
@@ -389,8 +391,8 @@
     </div>
   </div>
 
-  <div v-if="openModelConfig" class="fixed inset-0 bg-black/60 z-30 flex items-center justify-center" @click.self="openModelConfig = false">
-    <div class="card glass w-full max-w-3xl p-4 max-h-[85vh] overflow-y-auto">
+  <div v-if="openModelConfig" class="fixed inset-0 bg-black/60 z-30 flex items-center justify-center p-3" @click.self="openModelConfig = false">
+    <div class="card glass w-full max-w-3xl p-4 max-h-[min(85dvh,900px)] overflow-y-auto">
       <div class="card-header">
         <h3 class="card-title">模型配置</h3>
         <button class="text-gray-300 hover:text-white" @click="openModelConfig = false">关闭</button>
@@ -453,7 +455,7 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { useDashboardStore } from '../stores/dashboard'
@@ -466,6 +468,7 @@ const dashboardStore = useDashboardStore()
 const actionLoading = ref(false)
 const openHistory = ref(false)
 const showAlerts = ref(false)
+const alertsWrap = ref(null)
 const openCreateTodo = ref(false)
 const includeTodoDue = ref(false)
 const newTodoTitle = ref('')
@@ -743,6 +746,30 @@ const alertItems = computed(() => {
 })
 
 const alertCount = computed(() => alertItems.value.length)
+
+function toggleAlerts() {
+  showAlerts.value = !showAlerts.value
+}
+
+function closeAlerts() {
+  showAlerts.value = false
+}
+
+function handleAlertsOutsideClick(event) {
+  const root = alertsWrap.value
+  if (!showAlerts.value || !root) return
+  if (!root.contains(event.target)) {
+    showAlerts.value = false
+  }
+}
+
+onMounted(() => {
+  document.addEventListener("pointerdown", handleAlertsOutsideClick)
+})
+
+onBeforeUnmount(() => {
+  document.removeEventListener("pointerdown", handleAlertsOutsideClick)
+})
 
 function logout() {
   authStore.logout()

@@ -31,13 +31,32 @@ class UsageService:
             return json.loads(resp.read().decode("utf-8"))
 
     @classmethod
+    def _as_bool(cls, value: Any, default: bool = False) -> bool:
+        if isinstance(value, bool):
+            return value
+        if value is None:
+            return default
+        if isinstance(value, (int, float)):
+            return value != 0
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized in {"1", "true", "yes", "on"}:
+                return True
+            if normalized in {"0", "false", "no", "off", ""}:
+                return False
+        return default
+
+    @classmethod
     def _effective_provider_cfg(cls, provider: str, cfg: Dict[str, Any]) -> Dict[str, Any]:
         out = dict(cfg or {})
         if provider == "minimax":
             out["api_key"] = str(out.get("api_key") or MINIMAX_API_KEY or "").strip()
             out["group_id"] = str(out.get("group_id") or MINIMAX_GROUP_ID or "").strip()
             out["quota_url"] = str(out.get("quota_url") or MINIMAX_QUOTA_URL or "").strip()
-            out["usage_is_remaining"] = bool(out.get("usage_is_remaining", MINIMAX_USAGE_IS_REMAINING))
+            out["usage_is_remaining"] = cls._as_bool(
+                out.get("usage_is_remaining"),
+                default=MINIMAX_USAGE_IS_REMAINING
+            )
         return out
 
     @classmethod
@@ -123,7 +142,10 @@ class UsageService:
         api_key = str(cfg.get("api_key") or "").strip()
         quota_url = str(cfg.get("quota_url") or "").strip()
         group_id = str(cfg.get("group_id") or "").strip()
-        usage_is_remaining = bool(cfg.get("usage_is_remaining", MINIMAX_USAGE_IS_REMAINING))
+        usage_is_remaining = cls._as_bool(
+            cfg.get("usage_is_remaining"),
+            default=MINIMAX_USAGE_IS_REMAINING
+        )
 
         if "{group_id}" in quota_url and group_id:
             quota_url = quota_url.format(group_id=group_id)

@@ -64,21 +64,25 @@ app.include_router(usage_router, prefix="/api")
 
 # Frontend path - serve built Vue app
 FRONTEND_PATH = Path(__file__).parent / "frontend" / "dist"
+FRONTEND_ASSETS_PATH = FRONTEND_PATH / "assets"
+FRONTEND_INDEX_FILE = FRONTEND_PATH / "index.html"
 
-# Mount static files
-if FRONTEND_PATH.exists():
-    app.mount("/assets", StaticFiles(directory=str(FRONTEND_PATH / "assets")), name="assets")
+# Mount static files only when build assets are present.
+if FRONTEND_ASSETS_PATH.exists():
+    app.mount("/assets", StaticFiles(directory=str(FRONTEND_ASSETS_PATH)), name="assets")
 
 
 @app.get("/")
 async def root():
     """Serve the main dashboard page"""
-    if FRONTEND_PATH.exists():
-        return FileResponse(str(FRONTEND_PATH / "index.html"))
+    if FRONTEND_INDEX_FILE.exists():
+        return FileResponse(str(FRONTEND_INDEX_FILE))
     else:
         return {
             "message": "OpenClaw Dashboard API",
             "version": "1.0.0",
+            "frontend_ready": False,
+            "frontend_expected_index": str(FRONTEND_INDEX_FILE),
             "docs": "/docs",
             "endpoints": {
                 "auth": "/api/auth",

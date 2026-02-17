@@ -16,14 +16,14 @@ class IntegrationStore:
     @classmethod
     def _default_payload(cls) -> Dict[str, Any]:
         return {
-            "version": 1,
+            "version": 2,
             "providers": {
                 "minimax": {
                     "enabled": False,
                     "api_key": "",
                     "group_id": "",
                     "quota_url": "",
-                    "usage_is_remaining": False,
+                    "usage_is_remaining": True,
                 },
                 "openai": {
                     "enabled": False,
@@ -67,6 +67,13 @@ class IntegrationStore:
             payload = cls._default_payload()
 
         default = cls._default_payload()
+        old_version = payload.get("version")
+        try:
+            old_version_num = int(old_version)
+        except Exception:
+            old_version_num = 1
+        migrated = False
+
         payload.setdefault("version", default["version"])
         payload.setdefault("providers", {})
 
@@ -79,6 +86,22 @@ class IntegrationStore:
             merged = deepcopy(defaults)
             merged.update(current)
             providers[provider] = merged
+
+        # Migrate old MiniMax default semantics:
+        # the coding_plan/remains endpoint reports "remaining", not "used".
+        if old_version_num < 2:
+            minimax_cfg = providers.get("minimax")
+            if isinstance(minimax_cfg, dict):
+                quota_url = str(minimax_cfg.get("quota_url") or "").lower()
+                raw_flag = minimax_cfg.get("usage_is_remaining")
+                if (not quota_url or "remain" in quota_url) and raw_flag in (False, 0, "0", "false", "False", ""):
+                    minimax_cfg["usage_is_remaining"] = True
+                    migrated = True
+            payload["version"] = default["version"]
+            migrated = True
+
+        if migrated:
+            cls._save(payload)
 
         return payload
 

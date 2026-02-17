@@ -17,7 +17,7 @@ MINIMAX_API_KEY = os.environ.get("MINIMAX_API_KEY")
 MINIMAX_API_BASE = os.environ.get("MINIMAX_API_BASE", "https://www.minimaxi.com")
 MINIMAX_GROUP_ID = os.environ.get("MINIMAX_GROUP_ID")
 MINIMAX_QUOTA_URL = os.environ.get("MINIMAX_QUOTA_URL")
-MINIMAX_USAGE_IS_REMAINING = os.environ.get("MINIMAX_USAGE_IS_REMAINING", "0") == "1"
+MINIMAX_USAGE_IS_REMAINING = os.environ.get("MINIMAX_USAGE_IS_REMAINING", "1") == "1"
 
 # JWT config
 JWT_SECRET = "openclaw-dashboard-secret-key-change-in-production"
