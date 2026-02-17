@@ -79,3 +79,9 @@ cd /Users/macmini/openclaw/openclaw-dashboard
 source .venv/bin/activate
 python server.py
 ```
+
+## 支持项目
+
+如果这个项目对你有帮助，欢迎请我喝杯咖啡。
+
+![微信赞赏码](assets/social/wechat-donate.png)
